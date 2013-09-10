@@ -1,3 +1,9 @@
+<?php
+
+  $allowCat = array(1);
+
+?>
+
 <div id='bump'>
 <?php theme_include('headerDark'); ?>
         <section class="article archive">
@@ -7,12 +13,16 @@
               <ol class="post-list">
                  <lh><h2><span class="bb">Recent Posts</span></h2></lh>
                 <?php while(posts()): ?>
-                  <li>
-                    <div class="deets left-slide"><h1><a href="<?php echo article_url(); ?>"><?php echo article_title(); ?></a></h1>
-                        <p class="date"><time datetime="<?php echo date(DATE_W3C, article_time()); ?>"><?php echo relative_time(article_time()); ?></time></p>
-                        <p class=""><?php echo article_description(); ?></p>
-                    </div>
-                  </li>
+                  <?php foreach($allowCat as $cat): ?>
+                    <?php if(article_category_id() == $cat): ?>
+                      <li>
+                        <div class="deets left-slide"><h1><a href="<?php echo article_url(); ?>"><?php echo article_title(); ?></a></h1>
+                            <p class="date"><time datetime="<?php echo date(DATE_W3C, article_time()); ?>"><?php echo relative_time(article_time()); ?></time></p>
+                            <p class=""><?php echo article_description(); ?></p>
+                        </div>
+                      </li>
+                    <?php endif; ?>
+                  <?php endforeach; ?>
                 <?php endwhile; ?>
               </ol>
             <?php else: ?>

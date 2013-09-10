@@ -106,6 +106,48 @@ function home_latest_post() {
 	}
 }
 
+function article_category_id() {
+  if($category = Registry::prop('article', 'category')) {
+    $categories = Registry::get('all_categories');
+    return $categories[$category]->id;
+  }
+}
+    
+function portf_list() {
+  // only run on the first call
+  if( ! Registry::has('rwar_post_archive')) {
+    // capture original article if one is set
+    if($article = Registry::get('article')) {
+      Registry::set('original_article', $article);
+    }
+  }
+  
+  if( ! $posts = Registry::get('rwar_post_archive')) {
+    $posts = Post::where('status', '=', 'published')->sort('created', 'desc')->get();
+    
+    Registry::set('rwar_post_archive', $posts = new Items($posts));
+  }
+    
+  if($result = $posts->valid()) {
+    // register single post
+    Registry::set('article', $posts->current());
+    
+    // move to next
+    $posts->next();
+  }
+  else {
+    // back to the start
+    $posts->rewind();
+    
+    // reset original article
+    Registry::set('article', Registry::get('original_article'));
+    
+    // remove items
+    Registry::set('rwar_post_archive', false);
+  }
+    
+  return $result;
+}
 
 /*
   Social
@@ -126,7 +168,7 @@ function dribbble_account() {
 }
 
 function dribbble_url() {
-  return 'http://dribbble.com/' . dribbble_account();
+  return 'http://' . dribbble_account();
 }
 
 // Dribbble
